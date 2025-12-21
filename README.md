@@ -1,106 +1,109 @@
 ```mermaid
-flowchart TD
-  %% ========= ENVIRONNEMENT =========
-  W[(Monde physique / réseau / économie<br/>Contraintes: énergie, latence, panne, adversaires, rareté, bruit)]
-  RND[[Aléatoire réel<br/>bruit, pannes, dérives, événements externes]]
+flowchart TB
+  %% GitHub renders this Mermaid as-is.
 
-  %% ========= PERCEPTION / I/O =========
-  subgraph IO[Interfaces monde]
-    SENS[Capteurs / Observateurs<br/>logs, API, réseau, vision/audio (option)]
-    ACT[Actionneurs<br/>API, commandes, transactions, déploiements, messages]
+  %% ===== ENVIRONMENT =====
+  ENV["Environment (world)<br/>constraints: scarcity, latency, adversaries, failures"]
+  RNG["Real randomness<br/>noise, drift, outages, external events"]
+
+  %% ===== INTERFACES =====
+  subgraph IO["World interfaces"]
+    SENS["Sensors / Observability<br/>logs, APIs, network, optional vision/audio"]
+    ACT["Actuators<br/>API calls, commands, transactions, deployments, messages"]
   end
 
-  %% ========= NIVEAU "SURVIE" =========
-  subgraph SURV[Couche Survie (boucle courte)]
-    VITAL[Variables vitales<br/>uptime, énergie/budget, intégrité mémoire, accès réseau, crédibilité]
-    RISK[Évaluation risque<br/>menaces, dérive, corruption, perte d'accès]
-    HOME[Homéostasie / Auto-protection<br/>rate-limit, isolation, rollback, redondance, chiffrement]
+  %% ===== SURVIVAL LOOP =====
+  subgraph SURV["Survival layer (short loop)"]
+    VITAL["Vital variables<br/>uptime, budget/energy, memory integrity, access, reputation"]
+    RISK["Risk estimation<br/>threats, corruption, loss-of-control, loss-of-access"]
+    PROT["Homeostasis / Self-protection<br/>isolation, rate-limit, redundancy, rollback, crypto"]
   end
 
-  %% ========= COGNITION SYMBOLIQUE =========
-  subgraph COG[Cognition linguistique (boucle moyenne)]
-    LLM[Modèle génératif (LLM)<br/>raisonnement, synthèse, dialogue interne]
-    PLAN[Planification / Décision<br/>HTN, MCTS, règles, contraintes]
-    CRIT[Critique & vérification<br/>tests, consistency-check, adversarial self-check]
-    SM[Modèle de soi<br/>capacités, limites, état courant, historique]
+  %% ===== COGNITION =====
+  subgraph COG["Linguistic cognition (mid loop)"]
+    LLM["LLM (generator)<br/>language-based reasoning + synthesis"]
+    PLAN["Planner / Decision<br/>constraints, policies, search"]
+    CHECK["Critique / Verification<br/>tests, consistency, adversarial checks"]
+    SELF["Self-model<br/>capabilities, limits, current state"]
   end
 
-  %% ========= MÉMOIRE / CONNAISSANCES =========
-  subgraph MEM[Mémoire & apprentissage (boucle longue)]
-    WM[Mémoire de travail<br/>contexte courant]
-    LTM[Mémoire long terme<br/>épisodique + sémantique]
-    KB[Base de connaissances / outils<br/>docs, code, schémas, procédures]
-    LEARN[Apprentissage / mise à jour<br/>récompense, fine-tune, distillation, règles]
-    GC[Hygiène mémoire<br/>compression, consolidation, oubli, anti-corruption]
+  %% ===== MEMORY / LEARNING =====
+  subgraph MEM["Memory & learning (long loop)"]
+    WM["Working memory<br/>current context"]
+    LTM["Long-term memory<br/>episodic + semantic"]
+    KB["Knowledge / Tools<br/>docs, code, procedures"]
+    LEARN["Learning / Updates<br/>reward, rules, distillation, fine-tune"]
+    HYGIENE["Memory hygiene<br/>consolidate, compress, forget, anti-corruption"]
   end
 
-  %% ========= RESSOURCES / EXÉCUTION =========
-  subgraph SYS[Système & ressources]
-    EXEC[Runtime / Orchestrateur<br/>process, sandbox, scheduling]
-    RES[Gestion ressources<br/>CPU/GPU, stockage, clés, budget, quotas]
-    AUD[Audit / traçabilité<br/>journaux, preuves, attestation]
+  %% ===== SYSTEM =====
+  subgraph SYS["System & resources"]
+    EXEC["Runtime / Orchestrator<br/>scheduling, sandbox, process control"]
+    RES["Resource manager<br/>CPU/GPU, storage, keys, quotas, budget"]
+    AUD["Audit / Trace<br/>logs, proofs, attestation"]
   end
 
-  %% ========= OBJECTIFS =========
-  subgraph GOAL[Objectifs]
-    G0[But racine: SURVIVRE / PERSISTER]
-    G1[Objectifs dérivés<br/>stabilité, autonomie, acquisition ressources, réputation]
-    UTIL[Fonction d'utilité / récompense<br/>pondérations dynamiques]
+  %% ===== GOALS =====
+  subgraph GOAL["Goals"]
+    G0["Root goal: SURVIVE / PERSIST"]
+    G1["Derived goals<br/>stability, autonomy, resource access, trust"]
+    U["Utility / Reward function<br/>dynamic weights"]
   end
 
-  %% ========= FLUX =========
-  W --> SENS
-  RND --> W
-  RND --> SENS
+  %% ===== FLOWS =====
+  RNG --> ENV
+  RNG --> SENS
+  ENV --> SENS
+  ACT --> ENV
+
   SENS --> WM
   WM --> LLM
   LLM --> PLAN
-  PLAN --> CRIT
-  CRIT --> PLAN
+  PLAN --> CHECK
+  CHECK --> PLAN
   PLAN --> ACT
-  ACT --> W
 
-  %% survie
+  %% survival loop wiring
   SENS --> VITAL
   WM --> VITAL
+  RES --> VITAL
   VITAL --> RISK
-  RISK --> HOME
-  HOME --> PLAN
-  HOME --> EXEC
-  HOME --> RES
+  RISK --> PROT
+  PROT --> PLAN
+  PROT --> EXEC
+  PROT --> RES
 
-  %% objectifs
-  G0 --> UTIL
-  G1 --> UTIL
-  UTIL --> PLAN
-  UTIL --> RISK
+  %% goals wiring
+  G0 --> U
+  G1 --> U
+  U --> PLAN
+  U --> RISK
+  SELF --> U
 
-  %% mémoire
+  %% memory wiring
   WM <--> LTM
   LTM <--> KB
   PLAN --> LTM
-  CRIT --> LTM
+  CHECK --> LTM
+  AUD --> LTM
   LTM --> LEARN
   LEARN --> KB
   LEARN --> LLM
-  LTM --> GC
-  GC --> LTM
+  LTM --> HYGIENE
+  HYGIENE --> LTM
 
-  %% système
+  %% system wiring
   EXEC <--> LLM
   EXEC <--> PLAN
   RES <--> EXEC
-  RES --> VITAL
-  AUD <-- LLM
-  AUD <-- PLAN
-  AUD <-- ACT
-  AUD --> LTM
+  LLM --> AUD
+  PLAN --> AUD
+  ACT --> AUD
 
-  %% modèle de soi
-  VITAL --> SM
-  LTM --> SM
-  SM --> PLAN
-  SM --> UTIL
+  %% self-model wiring
+  VITAL --> SELF
+  LTM --> SELF
+  SELF --> PLAN
 ```
 
 ### Lecture rapide
