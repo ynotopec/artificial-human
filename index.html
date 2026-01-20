@@ -1,4 +1,71 @@
-```mermaid
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Artificial Human - Interface web</title>
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+      mermaid.initialize({ startOnLoad: true, theme: "default" });
+    </script>
+    <style>
+      :root {
+        font-family: "Inter", system-ui, -apple-system, sans-serif;
+        color: #1a1a1a;
+        background: #f6f7fb;
+      }
+
+      body {
+        margin: 0;
+        padding: 32px 20px 64px;
+      }
+
+      main {
+        max-width: 960px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+      }
+
+      h1 {
+        margin-bottom: 8px;
+      }
+
+      section {
+        background: #fff;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 20px rgba(31, 41, 55, 0.08);
+      }
+
+      .mermaid {
+        margin-top: 16px;
+      }
+
+      ul {
+        margin: 12px 0 0;
+        padding-left: 20px;
+      }
+
+      .hint {
+        font-size: 0.95rem;
+        color: #475569;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Interface web de test</h1>
+        <p class="hint">
+          Visualise les variantes d’architecture sous forme de diagrammes Mermaid.
+        </p>
+      </header>
+
+      <section>
+        <h2>Architecture générale (boucles)</h2>
+        <div class="mermaid">
 flowchart TB
   %% GitHub renders this Mermaid as-is.
 
@@ -104,22 +171,12 @@ flowchart TB
   VITAL --> SELF
   LTM --> SELF
   SELF --> PLAN
-```
+        </div>
+      </section>
 
-### Lecture rapide
-
-* **Boucle courte (survie)** : mesure l’état vital → estime le risque → applique des protections → influence immédiatement la planification et l’exécution.
-* **Boucle moyenne (cognition linguistique)** : le LLM + planificateur + critique produisent des décisions et des actions.
-* **Boucle longue (mémoire / apprentissage)** : consolidation/oubli, mise à jour des connaissances et ajustement des politiques.
-* **Aléatoire réel** : injecte des bifurcations (pannes, bruit, surprises) rendant l’histoire de l’agent **non rejouable** et donc “singulière”.
-
-Si tu veux, je peux fournir une variante “architecture déployée” (microservices: runtime, mémoire, policy, tool-router, audit) ou une variante “formelle” (MDP/POMDP + fonction de valeur + contraintes de sûreté).
-
----
-
-## Variante “architecture déployée” (microservices)
-
-```mermaid
+      <section>
+        <h2>Architecture déployée (microservices)</h2>
+        <div class="mermaid">
 flowchart LR
   %% ===== CLIENTS / MONDE =====
   subgraph WORLD["Monde / Clients"]
@@ -163,35 +220,20 @@ flowchart LR
   RUNTIME --> AUDIT --> OBJ
   API --> OBS
   RUNTIME --> OBS
-```
+        </div>
+      </section>
 
-### Notes
-
-* **API Gateway** assure l’authentification, la limitation de débit et l’acheminement vers le runtime.
-* **Policy/Safety** impose les contraintes (budgets, outils autorisés, risques).
-* **Tool Router** orchestre les appels externes (APIs, jobs, actions).
-* **Mémoire** agrège WM/LTM/KB et s’appuie sur des stockages spécialisés.
-* **Audit** conserve les décisions et preuves pour l’analyse et la conformité.
-
----
-
-## Variante “formelle” (esquisse MDP/POMDP)
-
-* **États** : \(s_t = (v_t, m_t, r_t)\) avec variables vitales, mémoire, risque.
-* **Observations** : \(o_t\) issues des capteurs, logs, métriques.
-* **Actions** : \(a_t\) (outils, messages, déploiements, contrôles).
-* **Transition** : \(P(s_{t+1} \mid s_t, a_t)\) injecte l’aléa réel.
-* **Récompense** : \(R(s_t, a_t)\) pondère survie, stabilité, coût, confiance.
-* **Contraintes** : sûreté hard (non-violation) + budgets (soft).
-
----
-
-## Interface web de test
-
-Une interface statique est disponible pour visualiser les diagrammes Mermaid dans le navigateur.
-
-```bash
-python -m http.server 8000
-```
-
-Ensuite ouvrir <http://localhost:8000/index.html>.
+      <section>
+        <h2>Variante formelle (MDP / POMDP)</h2>
+        <ul>
+          <li><strong>États</strong> : s_t = (v_t, m_t, r_t) avec variables vitales, mémoire, risque.</li>
+          <li><strong>Observations</strong> : o_t issues des capteurs, logs, métriques.</li>
+          <li><strong>Actions</strong> : a_t (outils, messages, déploiements, contrôles).</li>
+          <li><strong>Transition</strong> : P(s_{t+1} | s_t, a_t) injecte l’aléa réel.</li>
+          <li><strong>Récompense</strong> : R(s_t, a_t) pondère survie, stabilité, coût, confiance.</li>
+          <li><strong>Contraintes</strong> : sûreté hard (non-violation) + budgets (soft).</li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>
