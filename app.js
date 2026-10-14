@@ -3,7 +3,7 @@ const notice = document.querySelector("[data-mermaid-status]");
 async function loadMermaid() {
   try {
     const mermaid = await import(
-      "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs"
+      "https://cdn.jsdelivr.net/npm/mermaid@10.9.8/dist/mermaid.esm.min.mjs"
     );
     mermaid.default.initialize({ startOnLoad: true, theme: "default" });
     if (notice) {
